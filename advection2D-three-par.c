@@ -134,7 +134,7 @@ int main(){
     }
   }
   fclose(initialfile);
-  
+
   /*** Update solution by looping over time steps ***/
   /* LOOP 5 */
   // Cannot perfectly collapse loop due to differing inner loop depths
@@ -170,9 +170,11 @@ int main(){
     #pragma omp parallel for collapse(2) default(shared)
     for (int i=1; i<NX+1; i++){
       for (int j=1; j<NY+1; j++){
+        // TASK 3 - Adding Vertical Shear
         if (y[j] > 1) {
-          // adding vertical shear
-          modified_velx = (0.2 / 0.41) * (log(y[j]) / 1.66); // close to sqr root (e)
+          // modified_velx = (0.2 / 0.41) * (log(y[j]) / 1.66); // close to sqr root (e)
+          // modified_velx = (0.2 / 0.41) * (log(y[j]) / sqrt(M_E)); // was not working on remote linux
+          modified_velx = (0.2 / 0.41) * (log(y[j]) / sqrt(exp(1)));
         } else { // this else loop isn't strictly necessary but helps with readability
             modified_velx = 0.0;
         }
@@ -192,12 +194,12 @@ int main(){
     #pragma omp parallel for collapse(2) default(shared)
     for	(int i=1; i<NX+1; i++){
       for (int j=1; j<NY+1; j++){
-	u[i][j] = u[i][j] + dudt[i][j] * dt;
+	    u[i][j] = u[i][j] + dudt[i][j] * dt;
       }
     }
     
   } // time loop
-  
+
   /*** Write array of final u values out to file ***/
   FILE *finalfile;
   finalfile = fopen("final.dat", "w");
