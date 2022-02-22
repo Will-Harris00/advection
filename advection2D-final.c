@@ -154,8 +154,9 @@ int main(){
 
     /*** Apply boundary conditions at u[:][0] and u[:][NY+1] ***/
     /* LOOP 7 */
-    // All variables scoped as shared
-    // #pragma omp parallel for private(u)
+    // Variables scoped as shared by default
+    // Can write to a shared array using the unique index
+    #pragma omp parallel for default(shared)
     for (int i=0; i<NX+2; i++){
       u[i][0]    = bval_lower;
       u[i][NY+1] = bval_upper;
