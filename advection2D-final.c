@@ -78,6 +78,9 @@ int main(){
   float dt = CFL / ( (fabs(velx) / dx) + (fabs(vely) / dy) );
 
   float modified_velx = 0.0; // our modified horizontal velocity
+  const float ustar = 0.2;   // friction velocity
+  const float k = 0.41;      // Von Karman's constant
+  const float z0 = 1.0;      // roughness length
   
   /*** Report information about the calculation ***/
   printf("Grid spacing dx     = %g\n", dx);
@@ -174,9 +177,9 @@ int main(){
       for (int j=1; j<NY+1; j++){
         // TASK 3 - Adding Vertical Shear
         if (y[j] > 1) {
-          // modified_velx = (0.2 / 0.41) * (log(y[j]) / 1.66); // close to sqr root (e)
-          // modified_velx = (0.2 / 0.41) * (log(y[j]) / sqrt(M_E)); // was not working on remote linux
-          modified_velx = (0.2 / 0.41) * (log(y[j]) / sqrt(exp(1)));
+          // modified_velx = (ustar / k) * (log(y[j]) / 1.66); // close to sqr root (e)
+          // modified_velx = (ustar / k) * (log(y[j]) / sqrt(M_E)); // was not working on remote linux
+          modified_velx = (ustar / k) * (log(y[j]) / sqrt(exp(z0)));
         } else { // this else loop isn't strictly necessary but helps with readability
             modified_velx = 0.0;
         }
