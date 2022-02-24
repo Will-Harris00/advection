@@ -176,7 +176,7 @@ int main(){
     for (int i=1; i<NX+1; i++){
       for (int j=1; j<NY+1; j++){
         // TASK 3 - Adding Vertical Shear
-        if (y[j] > 1) {
+        if (y[j] > z0) {
           // modified_velx = (ustar / k) * (log(y[j]) / 1.66); // close to sqr root (e)
           // modified_velx = (ustar / k) * (log(y[j]) / sqrt(M_E)); // was not working on remote linux
           modified_velx = (ustar / k) * (log(y[j]) / sqrt(exp(z0)));
@@ -221,7 +221,7 @@ int main(){
   fclose(finalfile);
 
   // TASK 4 - Calculating the Vertically Averaged Distribution
-  float avg[NY]; // variable store avg intensity at each value of x
+  float vert_avg_dist[NY]; // variable store avg intensity at each value of x
   float intensity_sum; // allows us to average the value of u(x,y) for the entire range of y values at each value of x
   /* Loop over points in the domain but not boundary values */
   for(int i=1; i<NX+1; i++){
@@ -229,10 +229,10 @@ int main(){
     for (int j=1; j<NY+1; j++){
       intensity_sum += u[i][j]; // sum the y attribute of u(x, y) at each value of x
     }
-    avg[i] = intensity_sum / (float) NY; // average the values of intensity in the y direction at each value of x
+    vert_avg_dist[i] = intensity_sum / (float) NY; // average the values of intensity in the y direction at each value of x
     // printf("%d\n", NY);
     // printf("%f\n", intensity_sum);
-    // printf("%f\n\n", avg[i]);
+    // printf("%f\n\n", vert_avg_dist[i]);
   }
 
   /*** Write array of vertically averaged u values out to file ***/
@@ -240,7 +240,7 @@ int main(){
   vertavgfile = fopen("vertavg.dat", "w");
   for (int i=0; i<NX+1; i++){
     for (int j=0; j<NY+1; j++){
-      fprintf(vertavgfile, "%g %g\n", x[i], avg[i]);
+      fprintf(vertavgfile, "%g %g\n", x[i], vert_avg_dist[i]);
     }
   }
   fclose(vertavgfile);
